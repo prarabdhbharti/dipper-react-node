@@ -4,6 +4,7 @@ class App extends React.Component {
 		constructor(props){
 			super(props);
 			this.state = { zoom:7, autoDriveSteps:[], autoDriveSteps2:[] };
+			this.state.directionsRenderer = new google.maps.DirectionsRenderer();
 		}
 		static propTypes() {
 			initialCenter: React.PropTypes.objectOf(React.PropTypes.number).isRequired
@@ -65,10 +66,9 @@ class App extends React.Component {
     	var directionsService = new google.maps.DirectionsService;
     	//calculate route
     	if(origin && destination){
-    		var directionsRenderer = new google.maps.DirectionsRenderer({
-        	map: map
-    		});
-    		directionsRenderer.setDirections(null);
+    		_val.directionsRenderer.setDirections(null);
+    		_val.directionsRenderer.setMap(null);
+    		_val.directionsRenderer.setMap(map);
     		directionsService.route({
 	        origin: origin,
 	        destination: destination,
@@ -77,7 +77,7 @@ class App extends React.Component {
 	      },function(response, status) {
 		      if (status == google.maps.DirectionsStatus.OK) {
 		          // display the route
-		          directionsRenderer.setDirections(response);
+		          _val.directionsRenderer.setDirections(response);
 		          _val.autoDriveSteps = new Array();
 		          _val.autoDriveSteps = response.routes[0].overview_path.slice(0);
 		          _self.startRouteAnimation(origin,_val.autoDriveSteps);
@@ -106,6 +106,7 @@ class App extends React.Component {
         i++;
         if(i==length){
         	clearInterval(autoDriveTimer);
+        	marker.setMap(null);
         }
       },80);
 		}
